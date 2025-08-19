@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>关于我们 - 新闻聚合系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #2563eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #2563eb;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu {
+            display: none;
+            border-top: 1px solid #e5e7eb;
+            padding: 16px 0;
+        }
+
+        .mobile-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .mobile-nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 8px 0;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 32px 0;
+        }
+
+        .about-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            padding: 32px;
+        }
+
+        .about-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 24px;
+        }
+
+        .about-content {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .about-content h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111827;
+            margin: 32px 0 16px 0;
+        }
+
+        .about-content p {
+            margin-bottom: 16px;
+        }
+
+        .about-content ul, .about-content ol {
+            margin: 16px 0;
+            padding-left: 24px;
+        }
+
+        .about-content li {
+            margin-bottom: 8px;
+        }
+
+        .about-content strong {
+            color: #111827;
+        }
+
+        .disclaimer {
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 32px;
+        }
+
+        .disclaimer p {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .about-title {
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .about-card {
+                padding: 24px;
+            }
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .active {
+            display: block !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="index.html" class="logo">
+                    <div class="logo-icon">N</div>
+                    <span class="logo-text">新闻聚合</span>
+                </a>
+
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">首页</a>
+                    <a href="index.html?category=财经" class="nav-link">财经</a>
+                    <a href="index.html?category=科技" class="nav-link">科技</a>
+                    <a href="about.html" class="nav-link">关于</a>
+                </nav>
+
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            </div>
+
+            <div class="mobile-menu" id="mobileMenu">
+                <nav class="mobile-nav">
+                    <a href="index.html" class="mobile-nav-link">首页</a>
+                    <a href="index.html?category=财经" class="mobile-nav-link">财经</a>
+                    <a href="index.html?category=科技" class="mobile-nav-link">科技</a>
+                    <a href="about.html" class="mobile-nav-link">关于</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="about-card">
+                <h1 class="about-title">关于新闻聚合系统</h1>
+                
+                <div class="about-content">
+                    <h2>项目简介</h2>
+                    <p>
+                        新闻聚合系统是一个现代化的新闻资讯平台，整合了来自多个权威新闻源的最新财经和科技资讯。
+                        我们致力于为用户提供高质量、多样化的新闻内容，帮助用户快速获取行业动态和重要信息。
+                    </p>
+
+                    <h2>新闻来源</h2>
+                    <ul>
+                        <li><strong>36kr</strong> - 专注于科技创业和商业创新的媒体平台</li>
+                        <li><strong>BBC</strong> - 英国广播公司，提供全球视角的新闻报道</li>
+                        <li><strong>腾讯新闻</strong> - 腾讯旗下的综合性新闻平台</li>
+                        <li><strong>网易新闻</strong> - 网易旗下的新闻资讯服务</li>
+                    </ul>
+
+                    <h2>内容特色</h2>
+                    <ul>
+                        <li><strong>财经新闻</strong> - 涵盖股市、基金、房地产、宏观经济等财经领域</li>
+                        <li><strong>科技新闻</strong> - 关注人工智能、互联网、硬件设备等科技前沿</li>
+                        <li><strong>实时更新</strong> - 定期从各新闻源获取最新内容</li>
+                        <li><strong>智能筛选</strong> - 支持按来源、分类、时间等多维度筛选</li>
+                    </ul>
+
+                    <h2>技术特点</h2>
+                    <ul>
+                        <li><strong>响应式设计</strong> - 完美适配桌面、平板和移动设备</li>
+                        <li><strong>现代化架构</strong> - 基于HTML5、CSS3、JavaScript构建</li>
+                        <li><strong>性能优化</strong> - 图片懒加载、响应式图片等优化技术</li>
+                        <li><strong>用户体验</strong> - 简洁美观的界面设计，流畅的交互体验</li>
+                    </ul>
+
+                    <h2>使用说明</h2>
+                    <ol>
+                        <li>在首页浏览最新新闻，支持按分类快速筛选</li>
+                        <li>使用筛选器按来源、分类、时间等条件精确查找</li>
+                        <li>点击新闻卡片查看详细内容</li>
+                        <li>在详情页可以分享新闻或查看原文链接</li>
+                        <li>浏览相关新闻推荐，发现更多感兴趣的内容</li>
+                    </ol>
+
+                    <h2>联系我们</h2>
+                    <p>
+                        如果您有任何建议或反馈，欢迎通过以下方式联系我们：
+                    </p>
+                    <ul>
+                        <li>邮箱：contact@news-aggregator.com</li>
+                        <li>GitHub：github.com/news-aggregator</li>
+                    </ul>
+
+                    <div class="disclaimer">
+                        <p>
+                            <strong>免责声明：</strong>
+                            本系统仅作为新闻聚合工具，所有新闻内容版权归原作者和发布平台所有。
+                            我们不对新闻内容的准确性、完整性和时效性承担责任。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

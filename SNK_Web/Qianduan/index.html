@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新闻聚合系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 页面内容居中 */
+        .page-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .search-section {
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .ai-tools-section {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .news-content {
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-bottom: 1px solid #e5e7eb;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #2563eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .nav {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #2563eb;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 32px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>') no-repeat 12px center;
+            background-size: 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .mobile-menu {
+            display: none;
+            border-top: 1px solid #e5e7eb;
+            padding: 16px 0;
+        }
+
+        .mobile-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .mobile-nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            padding: 8px 0;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 32px 0;
+        }
+
+        .page-title {
+            margin-bottom: 32px;
+        }
+
+        .page-title h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-title p {
+            color: #6b7280;
+            font-size: 16px;
+        }
+
+        .content-layout {
+            display: flex;
+            gap: 32px;
+        }
+
+        /* Filter Sidebar */
+        .filter-sidebar {
+            width: 320px;
+            flex-shrink: 0;
+        }
+
+        .filter-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .filter-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .filter-toggle {
+            color: #2563eb;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .filter-content {
+            display: none;
+        }
+
+        .filter-content.active {
+            display: block;
+        }
+
+        .filter-section {
+            margin-bottom: 24px;
+        }
+
+        .filter-section h4 {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+
+        .filter-options {
+            display: grid;
+            gap: 8px;
+        }
+
+        .filter-options.grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .filter-options.grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .filter-options.grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .filter-option input {
+            border-radius: 4px;
+            border: 1px solid #d1d5db;
+        }
+
+        .filter-option input:checked {
+            accent-color: #2563eb;
+        }
+
+        .filter-option span {
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .filter-tags {
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-tag {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .filter-tag.source {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .filter-tag.category {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .filter-tag.sort {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .filter-tag.search {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        /* News Grid */
+        .news-content {
+            flex: 1;
+        }
+
+        .results-count {
+            margin-bottom: 24px;
+            color: #6b7280;
+        }
+
+        .news-grid {
+            display: grid;
+            gap: 24px;
+            grid-template-columns: 1fr;
+        }
+
+        .news-grid.tablet {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .news-grid.desktop {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            cursor: pointer;
+            transition: box-shadow 0.2s;
+        }
+
+        .news-card:hover {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .news-image {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background: #f3f4f6;
+            overflow: hidden;
+        }
+
+        .news-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .news-card:hover .news-image img {
+            transform: scale(1.05);
+        }
+
+        .news-content-inner {
+            padding: 16px;
+        }
+
+        .news-tags {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .news-tag {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .news-tag.source-36kr {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .news-tag.source-bbc {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .news-tag.source-tencent {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .news-tag.source-netease {
+            background: #fed7aa;
+            color: #ea580c;
+        }
+
+        .news-tag.category-finance {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .news-tag.category-tech {
+            background: #f3e8ff;
+            color: #7c3aed;
+        }
+
+        .news-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-summary {
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .news-tags-small {
+            display: flex;
+            gap: 4px;
+        }
+
+        .news-tag-small {
+            padding: 2px 6px;
+            background: #f3f4f6;
+            color: #6b7280;
+            border-radius: 4px;
+        }
+
+        /* Load More Button */
+        .load-more {
+            text-align: center;
+            margin-top: 32px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 0;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-title {
+            font-size: 18px;
+            font-weight: 500;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .empty-description {
+            color: #6b7280;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-layout {
+                flex-direction: column;
+            }
+            
+            .filter-sidebar {
+                width: 100%;
+            }
+            
+            .news-grid.desktop {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+            
+            .search-container {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .news-grid.tablet {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-options.grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filter-options.grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 16px;
+            }
+            
+            .page-title h1 {
+                font-size: 24px;
+            }
+            
+            .filter-options.grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 搜索栏样式 */
+        .search-section {
+            margin-bottom: 24px;
+        }
+
+        .search-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .search-container-full {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .search-input-full {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .search-input-full:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-btn {
+            padding: 12px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* AI工具集样式 */
+        .ai-tools-section {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #e5e7eb;
+        }
+
+        .ai-tools-row {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+
+        .ai-tool-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ai-tool-card:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .ai-tool-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .ai-tool-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .ai-tool-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .ai-tool-desc {
+            font-size: 12px;
+            color: #6b7280;
+            line-height: 1.4;
+            font-weight: 400;
+        }
+
+        /* 筛选器列表样式 */
+        .filter-options.list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-options.list .filter-option {
+            padding: 8px 0;
+        }
+
+        /* 悬浮AI对话按钮 */
+        .floating-ai-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .floating-ai-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.2);
+        }
+
+        .ai-btn-icon {
+            font-size: 20px;
+        }
+
+        .ai-btn-text {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* AI对话对话框 */
+        .ai-chat-modal {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .ai-chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-chat-header h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .ai-chat-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .ai-message, .user-message {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .ai-avatar, .user-avatar {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .ai-text, .user-text {
+            background: #f3f4f6;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.4;
+            max-width: 80%;
+        }
+
+        .user-text {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .ai-chat-input {
+            padding: 16px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 8px;
+        }
+
+        .ai-chat-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .ai-chat-input input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .ai-chat-input button {
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .ai-chat-input button:hover {
+            background: #1d4ed8;
+        }
+
+        /* 时间筛选按钮样式 */
+        .time-filter-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .time-filter-btn.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .time-filter-btn.inactive {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .time-filter-btn.inactive:hover {
+            background: #e5e7eb;
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .active {
+            display: block !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    <div class="logo-icon">AI</div>
+                    <span class="logo-text">AI聚合</span>
+                </a>
+
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            </div>
+
+            <div class="mobile-menu" id="mobileMenu">
+                <nav class="mobile-nav">
+                    <a href="#" class="mobile-nav-link">首页</a>
+                    <a href="#" class="mobile-nav-link">财经</a>
+                    <a href="#" class="mobile-nav-link">科技</a>
+                    <a href="#" class="mobile-nav-link">AI应用</a>
+                    <a href="#" class="mobile-nav-link">关于</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <div class="page-content">
+                <div class="page-title">
+                    <h1>最新新闻</h1>
+                    <p>获取来自36kr、BBC、腾讯新闻、网易新闻的最新财经科技资讯</p>
+                </div>
+
+            <!-- 搜索栏 -->
+            <div class="search-section">
+                <h2 class="search-title">热点搜索</h2>
+                <div class="search-container-full">
+                    <input type="text" class="search-input-full" placeholder="搜索AI工具、新闻资讯、技术动态...">
+                    <button class="search-btn" onclick="performSearch()">
+                        <span>🔍</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 时间筛选 -->
+            <div class="mb-6">
+                <div class="flex items-center space-x-4">
+                    <span class="text-sm font-medium text-gray-700">时间筛选：</span>
+                    <div class="flex space-x-2">
+                        <button 
+                            class="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-accent-600 text-white" 
+                            id="todayBtn"
+                            onclick="filterByTime('today')"
+                        >
+                            今日
+                        </button>
+                        <button 
+                            class="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300" 
+                            id="historyBtn"
+                            onclick="filterByTime('history')"
+                        >
+                            历史
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-layout">
+                <!-- Filter Sidebar -->
+                <aside class="filter-sidebar">
+                    <div class="filter-card">
+                        <div class="filter-header">
+                                                    <div class="filter-title">
+                            <span>🔍</span>
+                            筛选新闻
+                        </div>
+                        <button class="filter-toggle" onclick="toggleFilter()">收起</button>
+                    </div>
+
+                    <div class="filter-content active" id="filterContent">
+                            <!-- Source Filter -->
+                            <div class="filter-section">
+                                <h4>新闻来源</h4>
+                                <div class="filter-options list">
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="36kr" onchange="updateFilters()">
+                                        <span>36kr</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="BBC" onchange="updateFilters()">
+                                        <span>BBC</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="腾讯新闻" onchange="updateFilters()">
+                                        <span>腾讯新闻</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="网易新闻" onchange="updateFilters()">
+                                        <span>网易新闻</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Category Filter -->
+                            <div class="filter-section">
+                                <h4>新闻分类</h4>
+                                <div class="filter-options list">
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="财经" onchange="updateFilters()">
+                                        <span>财经</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="科技" onchange="updateFilters()">
+                                        <span>科技</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="AI应用" onchange="updateFilters()">
+                                        <span>AI应用</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="checkbox" value="综合" onchange="updateFilters()">
+                                        <span>综合</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Sort Options -->
+                            <div class="filter-section">
+                                <h4>排序方式</h4>
+                                <div class="filter-options">
+                                    <label class="filter-option">
+                                        <input type="radio" name="sort" value="publishedAt" onchange="updateFilters()" checked>
+                                        <span>最新发布</span>
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" name="sort" value="relevance" onchange="updateFilters()">
+                                        <span>相关度</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- Clear Filters -->
+                            <div class="filter-section" id="clearFiltersSection" style="display: none;">
+                                <button class="btn-primary" onclick="clearFilters()" style="width: 100%;">清除所有筛选器</button>
+                            </div>
+                        </div>
+
+                        <!-- Active Filter Tags -->
+                        <div class="filter-tags" id="filterTags"></div>
+                    </div>
+                </aside>
+
+                <!-- News Content -->
+                <div class="news-content">
+                    <!-- AI工具集板块 -->
+                    <div class="ai-tools-section mb-8">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">🤖 AI工具集</h2>
+                        <div class="ai-tools-row">
+                            <div class="ai-tool-card" onclick="openAITool('https://xinghuo.xfyun.cn/')">
+                                <div class="ai-tool-icon">🎯</div>
+                                <div class="ai-tool-content">
+                                    <h3 class="ai-tool-title">讯飞星火</h3>
+                                    <p class="ai-tool-desc">科大讯飞推出的认知大模型，支持多轮对话、知识问答、逻辑推理等</p>
+                                </div>
+                            </div>
+                            <div class="ai-tool-card" onclick="openAITool('https://tongyi.aliyun.com/')">
+                                <div class="ai-tool-icon">🌟</div>
+                                <div class="ai-tool-content">
+                                    <h3 class="ai-tool-title">通义千问</h3>
+                                    <p class="ai-tool-desc">阿里云推出的大语言模型，具备强大的自然语言理解和生成能力</p>
+                                </div>
+                            </div>
+                            <div class="ai-tool-card" onclick="openAITool('https://www.doubao.com/')">
+                                <div class="ai-tool-icon">🤖</div>
+                                <div class="ai-tool-content">
+                                    <h3 class="ai-tool-title">豆包</h3>
+                                    <p class="ai-tool-desc">字节跳动推出的AI智能助手，支持文本生成、对话、创作等多种功能</p>
+                                </div>
+                            </div>
+                            <div class="ai-tool-card" onclick="openAITool('https://www.deepseek.com/')">
+                                <div class="ai-tool-icon">🔍</div>
+                                <div class="ai-tool-content">
+                                    <h3 class="ai-tool-title">DeepSeek</h3>
+                                    <p class="ai-tool-desc">深度求索推出的开源大语言模型，在代码生成和数学推理方面表现优异</p>
+                                </div>
+                            </div>
+                            <div class="ai-tool-card" onclick="openAITool('https://hunyuan.tencent.com/')">
+                                <div class="ai-tool-icon">☁️</div>
+                                <div class="ai-tool-content">
+                                    <h3 class="ai-tool-title">腾讯混元</h3>
+                                    <p class="ai-tool-desc">腾讯推出的大语言模型，支持多模态输入，在中文理解和生成方面表现优秀</p>
+                                </div>
+                            </div>
+                            <div class="ai-tool-card" onclick="openAITool('https://claude.ai/')">
+                                <div class="ai-tool-icon">🧠</div>
+                                <div class="ai-tool-content">
+                                    <h3 class="ai-tool-title">Claude</h3>
+                                    <p class="ai-tool-desc">Anthropic推出的AI助手，以安全、可靠、有帮助著称，支持长文本处理</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="results-count">
+                        共找到 <span id="resultsCount">6</span> 条新闻
+                    </div>
+
+                    <div class="news-grid" id="newsGrid">
+                        <!-- News cards will be generated here -->
+                    </div>
+
+                    <div class="load-more">
+                        <button class="btn-primary" onclick="loadMoreNews()" id="loadMoreBtn">
+                            加载更多新闻
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 悬浮AI对话按钮 -->
+    <div class="floating-ai-btn" id="floatingAiBtn" onclick="toggleAIChat()">
+        <div class="ai-btn-icon">🤖</div>
+        <span class="ai-btn-text">AI对话</span>
+    </div>
+
+    <!-- AI对话对话框 -->
+    <div class="ai-chat-modal" id="aiChatModal">
+        <div class="ai-chat-header">
+            <h3>AI智能助手</h3>
+            <button class="close-btn" onclick="toggleAIChat()">✕</button>
+        </div>
+        <div class="ai-chat-content">
+            <div class="ai-chat-messages" id="aiChatMessages">
+                <div class="ai-message">
+                    <div class="ai-avatar">🤖</div>
+                    <div class="ai-text">你好！我是AI助手，有什么可以帮助你的吗？</div>
+                </div>
+            </div>
+            <div class="ai-chat-input">
+                <input type="text" id="aiChatInput" placeholder="输入你的问题..." onkeypress="handleAIChatEnter(event)">
+                <button onclick="sendAIMessage()">发送</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // News data
+        const mockNews = [
+            {
+                id: '1',
+                title: '特斯拉Q3财报超预期，股价大涨15%',
+                summary: '特斯拉发布第三季度财报，营收和利润均超分析师预期，主要得益于Model Y的强劲销售表现。',
+                publishedAt: '2024-01-15T10:30:00Z',
+                source: '36kr',
+                category: '财经',
+                imageUrl: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=450&fit=crop',
+                tags: ['特斯拉', '财报', '新能源汽车'],
+                url: 'https://example.com/news/1'
+            },
+            {
+                id: '7',
+                title: 'OpenAI发布GPT-5预览版，性能大幅提升',
+                summary: 'OpenAI宣布GPT-5预览版即将发布，新版本在理解能力和生成质量方面有显著提升，支持多模态输入。',
+                publishedAt: '2024-01-15T11:00:00Z',
+                source: '36kr',
+                category: 'AI应用',
+                imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop',
+                tags: ['OpenAI', 'GPT-5', 'AI模型', '多模态'],
+                url: 'https://example.com/news/7'
+            },
+            {
+                id: '8',
+                title: '字节跳动推出豆包AI助手，免费开放使用',
+                summary: '字节跳动正式发布豆包AI智能助手，基于自研大语言模型，支持文本生成、对话、创作等多种功能。',
+                publishedAt: '2024-01-15T10:45:00Z',
+                source: '腾讯新闻',
+                category: 'AI应用',
+                imageUrl: 'https://images.unsplash.com/photo-1673187730937-9f36d2c2c0b0?w=800&h=450&fit=crop',
+                tags: ['字节跳动', '豆包', 'AI助手', '免费'],
+                url: 'https://example.com/news/8'
+            },
+            {
+                id: '9',
+                title: 'AI绘画工具Midjourney V6正式发布',
+                summary: 'Midjourney发布V6版本，新版本在图像质量、细节表现和艺术风格方面有重大突破，支持更精确的提示词控制。',
+                publishedAt: '2024-01-15T10:15:00Z',
+                source: 'BBC',
+                category: 'AI应用',
+                imageUrl: 'https://images.unsplash.com/photo-1686191128892-3b8c7d8b3b3b?w=800&h=450&fit=crop',
+                tags: ['Midjourney', 'AI绘画', 'V6', '图像生成'],
+                url: 'https://example.com/news/9'
+            },
+            {
+                id: '2',
+                title: 'OpenAI发布GPT-5预览版，性能大幅提升',
+                summary: 'OpenAI宣布GPT-5预览版即将发布，新版本在理解能力和生成质量方面有显著提升。',
+                publishedAt: '2024-01-15T09:15:00Z',
+                source: 'BBC',
+                category: '科技',
+                imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=450&fit=crop',
+                tags: ['OpenAI', 'GPT-5', '人工智能'],
+                url: 'https://example.com/news/2'
+            },
+            {
+                id: '3',
+                title: '央行降准0.25个百分点，释放长期资金约5000亿元',
+                summary: '中国人民银行决定下调金融机构存款准备金率0.25个百分点，预计释放长期资金约5000亿元。',
+                publishedAt: '2024-01-15T08:45:00Z',
+                source: '腾讯新闻',
+                category: '财经',
+                imageUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&h=450&fit=crop',
+                tags: ['央行', '降准', '货币政策'],
+                url: 'https://example.com/news/3'
+            },
+            {
+                id: '4',
+                title: '苹果Vision Pro将于2月2日在美国上市',
+                summary: '苹果公司宣布，其首款空间计算设备Vision Pro将于2024年2月2日在美国市场正式发售。',
+                publishedAt: '2024-01-15T07:30:00Z',
+                source: '网易新闻',
+                category: '科技',
+                imageUrl: 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=800&h=450&fit=crop',
+                tags: ['苹果', 'Vision Pro', 'AR/VR'],
+                url: 'https://example.com/news/4'
+            },
+            {
+                id: '5',
+                title: '全球芯片短缺问题持续，台积电扩大产能',
+                summary: '台积电宣布扩大先进制程产能，以应对全球芯片短缺问题，预计2024年产能提升20%。',
+                publishedAt: '2024-01-15T06:15:00Z',
+                source: '36kr',
+                category: '科技',
+                imageUrl: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=450&fit=crop',
+                tags: ['台积电', '芯片', '半导体'],
+                url: 'https://example.com/news/5'
+            },
+            {
+                id: '6',
+                title: '新能源汽车补贴政策延续，行业迎来新机遇',
+                summary: '财政部宣布新能源汽车补贴政策将延续至2025年，预计将推动行业持续快速发展。',
+                publishedAt: '2024-01-15T05:00:00Z',
+                source: '腾讯新闻',
+                category: '财经',
+                imageUrl: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?w=800&h=450&fit=crop',
+                tags: ['新能源汽车', '补贴政策', '政策利好'],
+                url: 'https://example.com/news/6'
+            }
+        ];
+
+        let currentNews = [...mockNews];
+        let filteredNews = [...mockNews];
+        let currentFilters = {
+            timeFilter: 'today'  // 默认选中今日
+        };
+        let isLoading = false;
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // 应用默认筛选器
+            applyFilters();
+            updateFilterTags();
+            updateClearFiltersButton();
+            
+            renderNews();
+            updateResponsiveGrid();
+            window.addEventListener('resize', updateResponsiveGrid);
+        });
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+
+        // Toggle filter content
+        function toggleFilter() {
+            const filterContent = document.getElementById('filterContent');
+            const toggleBtn = document.querySelector('.filter-toggle');
+            
+            if (filterContent.classList.contains('active')) {
+                filterContent.classList.remove('active');
+                toggleBtn.textContent = '展开';
+            } else {
+                filterContent.classList.add('active');
+                toggleBtn.textContent = '收起';
+            }
+        }
+
+        // Update filters
+        function updateFilters() {
+            const sourceCheckboxes = document.querySelectorAll('input[type="checkbox"][value]');
+            const categoryCheckboxes = document.querySelectorAll('input[type="checkbox"][value]');
+            const sortRadios = document.querySelectorAll('input[type="radio"][name="sort"]');
+
+            // Collect source filters
+            const sources = Array.from(sourceCheckboxes)
+                .filter(cb => cb.checked && ['36kr', 'BBC', '腾讯新闻', '网易新闻'].includes(cb.value))
+                .map(cb => cb.value);
+
+            // Collect category filters
+            const categories = Array.from(categoryCheckboxes)
+                .filter(cb => cb.checked && ['财经', '科技', 'AI应用', '综合'].includes(cb.value))
+                .map(cb => cb.value);
+
+            // Get sort option
+            const sortBy = Array.from(sortRadios).find(r => r.checked)?.value;
+
+            // Update current filters
+            currentFilters = {
+                timeFilter: currentFilters.timeFilter || 'today'  // 保持时间筛选状态
+            };
+            if (sources.length > 0) currentFilters.source = sources;
+            if (categories.length > 0) currentFilters.category = categories;
+            if (sortBy) currentFilters.sortBy = sortBy;
+
+            // Apply filters
+            applyFilters();
+            updateFilterTags();
+            updateClearFiltersButton();
+        }
+
+        // 时间筛选功能
+        function filterByTime(timeType) {
+            const todayBtn = document.getElementById('todayBtn');
+            const historyBtn = document.getElementById('historyBtn');
+            
+            // 更新按钮样式
+            if (timeType === 'today') {
+                todayBtn.className = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-accent-600 text-white';
+                historyBtn.className = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300';
+                currentFilters.timeFilter = 'today';
+            } else {
+                historyBtn.className = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-accent-600 text-white';
+                todayBtn.className = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300';
+                currentFilters.timeFilter = 'history';
+            }
+            
+            // 应用筛选器
+            applyFilters();
+            updateFilterTags();
+            updateClearFiltersButton();
+        }
+
+        // Apply filters to news
+        function applyFilters() {
+            let result = [...currentNews];
+
+            // Source filter
+            if (currentFilters.source && currentFilters.source.length > 0) {
+                result = result.filter(item => currentFilters.source.includes(item.source));
+            }
+
+            // Category filter
+            if (currentFilters.category && currentFilters.category.length > 0) {
+                result = result.filter(item => currentFilters.category.includes(item.category));
+            }
+
+            // Time filter
+            if (currentFilters.timeFilter) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                if (currentFilters.timeFilter === 'today') {
+                    result = result.filter(item => {
+                        const newsDate = new Date(item.publishedAt);
+                        newsDate.setHours(0, 0, 0, 0);
+                        return newsDate.getTime() === today.getTime();
+                    });
+                } else if (currentFilters.timeFilter === 'history') {
+                    result = result.filter(item => {
+                        const newsDate = new Date(item.publishedAt);
+                        newsDate.setHours(0, 0, 0, 0);
+                        return newsDate.getTime() < today.getTime();
+                    });
+                }
+            }
+
+            // Search filter
+            if (currentFilters.searchQuery) {
+                const query = currentFilters.searchQuery.toLowerCase();
+                result = result.filter(item => 
+                    item.title.toLowerCase().includes(query) ||
+                    item.summary.toLowerCase().includes(query) ||
+                    item.tags.some(tag => tag.toLowerCase().includes(query)) ||
+                    item.source.toLowerCase().includes(query) ||
+                    item.category.toLowerCase().includes(query)
+                );
+            }
+
+            // Sort
+            if (currentFilters.sortBy === 'publishedAt') {
+                result.sort((a, b) => new Date(b.publishedAt) - new Date(a.publishedAt));
+            }
+
+            filteredNews = result;
+            renderNews();
+        }
+
+        // Update filter tags display
+        function updateFilterTags() {
+            const filterTags = document.getElementById('filterTags');
+            filterTags.innerHTML = '';
+
+            if (currentFilters.source) {
+                currentFilters.source.forEach(source => {
+                    const tag = document.createElement('span');
+                    tag.className = 'filter-tag source';
+                    tag.textContent = source;
+                    filterTags.appendChild(tag);
+                });
+            }
+
+            if (currentFilters.category) {
+                currentFilters.category.forEach(category => {
+                    const tag = document.createElement('span');
+                    tag.className = 'filter-tag category';
+                    tag.textContent = category;
+                    filterTags.appendChild(tag);
+                });
+            }
+
+            if (currentFilters.timeFilter) {
+                const tag = document.createElement('span');
+                tag.className = 'filter-tag sort';
+                tag.textContent = currentFilters.timeFilter === 'today' ? '今日' : '历史';
+                filterTags.appendChild(tag);
+            }
+
+            if (currentFilters.sortBy) {
+                const tag = document.createElement('span');
+                tag.className = 'filter-tag sort';
+                tag.textContent = currentFilters.sortBy === 'publishedAt' ? '最新发布' : '相关度';
+                filterTags.appendChild(tag);
+            }
+
+            if (currentFilters.searchQuery) {
+                const tag = document.createElement('span');
+                tag.className = 'filter-tag search';
+                tag.textContent = `搜索: ${currentFilters.searchQuery}`;
+                filterTags.appendChild(tag);
+            }
+        }
+
+        // Update clear filters button visibility
+        function updateClearFiltersButton() {
+            const clearSection = document.getElementById('clearFiltersSection');
+            const hasFilters = Object.keys(currentFilters).length > 0;
+            clearSection.style.display = hasFilters ? 'block' : 'none';
+        }
+
+        // Clear all filters
+        function clearFilters() {
+            // Uncheck all checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+
+            // Reset time filter buttons
+            const todayBtn = document.getElementById('todayBtn');
+            const historyBtn = document.getElementById('historyBtn');
+            todayBtn.className = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-accent-600 text-white';
+            historyBtn.className = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300';
+
+            // Clear search input
+            const searchInput = document.querySelector('.search-input-full');
+            if (searchInput) searchInput.value = '';
+
+            // Reset filters but keep time filter
+            currentFilters = {
+                timeFilter: 'today'  // 保持今日筛选
+            };
+            filteredNews = [...currentNews];
+            
+            // Update UI
+            renderNews();
+            updateFilterTags();
+            updateClearFiltersButton();
+        }
+
+        // Render news grid
+        function renderNews() {
+            const newsGrid = document.getElementById('newsGrid');
+            const resultsCount = document.getElementById('resultsCount');
+            
+            resultsCount.textContent = filteredNews.length;
+
+            if (filteredNews.length === 0) {
+                newsGrid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📰</div>
+                        <h3 class="empty-title">暂无相关新闻</h3>
+                        <p class="empty-description">请尝试调整筛选条件或搜索关键词</p>
+                    </div>
+                `;
+                return;
+            }
+
+            newsGrid.innerHTML = filteredNews.map(news => `
+                <article class="news-card" onclick="openNewsDetail('${news.id}')">
+                    <div class="news-image">
+                        <img src="${news.imageUrl}" alt="${news.title}" loading="lazy">
+                    </div>
+                    <div class="news-content-inner">
+                        <div class="news-tags">
+                            <span class="news-tag source-${getSourceClass(news.source)}">${news.source}</span>
+                            <span class="news-tag category-${getCategoryClass(news.category)}">${news.category}</span>
+                        </div>
+                        <h3 class="news-title">${news.title}</h3>
+                        <p class="news-summary">${news.summary}</p>
+                        <div class="news-footer">
+                            <span>${formatDate(news.publishedAt)}</span>
+                            <div class="news-tags-small">
+                                ${news.tags.slice(0, 2).map(tag => `<span class="news-tag-small">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        // Get source CSS class
+        function getSourceClass(source) {
+            const classMap = {
+                '36kr': '36kr',
+                'BBC': 'bbc',
+                '腾讯新闻': 'tencent',
+                '网易新闻': 'netease'
+            };
+            return classMap[source] || '36kr';
+        }
+
+        // Get category CSS class
+        function getCategoryClass(category) {
+            const classMap = {
+                '财经': 'finance',
+                '科技': 'tech',
+                '综合': 'general'
+            };
+            return classMap[category] || 'general';
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            try {
+                const date = new Date(dateString);
+                const month = date.getMonth() + 1;
+                const day = date.getDate();
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${month}月${day}日 ${hours}:${minutes}`;
+            } catch {
+                return '未知时间';
+            }
+        }
+
+        // Update responsive grid
+        function updateResponsiveGrid() {
+            const newsGrid = document.getElementById('newsGrid');
+            const width = window.innerWidth;
+            
+            newsGrid.className = 'news-grid';
+            if (width >= 1024) {
+                newsGrid.classList.add('desktop');
+            } else if (width >= 768) {
+                newsGrid.classList.add('tablet');
+            }
+        }
+
+        // Load more news
+        function loadMoreNews() {
+            if (isLoading) return;
+            
+            isLoading = true;
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            loadMoreBtn.textContent = '加载中...';
+            loadMoreBtn.disabled = true;
+
+            // Simulate loading
+            setTimeout(() => {
+                // 生成新的新闻，避免重复
+                const newNews = [];
+                const baseTitles = [
+                    'AI技术突破：大语言模型性能再创新高',
+                    '人工智能在医疗领域的应用前景广阔',
+                    '机器学习算法优化，准确率提升显著',
+                    '深度学习在图像识别方面取得重大进展',
+                    '自然语言处理技术推动智能客服发展',
+                    '计算机视觉技术助力自动驾驶安全',
+                    'AI芯片技术革新，算力大幅提升',
+                    '智能机器人技术在家居服务中的应用',
+                    '语音识别技术准确率突破95%',
+                    'AI辅助决策系统在企业中的价值体现'
+                ];
+                
+                for (let i = 0; i < 6; i++) {
+                    const randomIndex = Math.floor(Math.random() * baseTitles.length);
+                    const baseTitle = baseTitles[randomIndex];
+                    const newId = `new-${Date.now()}-${i}`;
+                    
+                    newNews.push({
+                        id: newId,
+                        title: baseTitle,
+                        summary: `这是关于${baseTitle}的详细报道，展示了人工智能技术的最新发展趋势和应用前景。`,
+                        publishedAt: new Date().toISOString(),
+                        source: ['36kr', 'BBC', '腾讯新闻', '网易新闻'][Math.floor(Math.random() * 4)],
+                        category: ['科技', 'AI应用', '综合'][Math.floor(Math.random() * 3)],
+                        imageUrl: `https://images.unsplash.com/photo-${Math.floor(Math.random() * 999999999)}?w=800&h=450&fit=crop`,
+                        tags: ['AI', '技术', '创新'],
+                        url: `https://example.com/news/${newId}`
+                    });
+                }
+                
+                currentNews = [...currentNews, ...newNews];
+                applyFilters();
+                
+                isLoading = false;
+                loadMoreBtn.textContent = '加载更多新闻';
+                loadMoreBtn.disabled = false;
+            }, 1000);
+        }
+
+        // Open news detail - 实现真实跳转
+        function openNewsDetail(newsId) {
+            // 根据新闻ID跳转到对应的详情页
+            if (newsId === '1') {
+                window.location.href = 'news-detail.html';
+            } else {
+                // 其他新闻直接跳转到对应的详情页
+                const news = currentNews.find(n => n.id === newsId);
+                if (news) {
+                    // 使用简单的跳转方式，避免复杂的模板字符串
+                    localStorage.setItem('currentNews', JSON.stringify(news));
+                    window.open('news-detail.html', '_blank');
+                } else {
+                    window.location.href = 'news-detail.html';
+                }
+            }
+        }
+
+        // 打开AI工具集
+        function openAITool(url) {
+            window.open(url, '_blank');
+        }
+
+        // 执行搜索
+        function performSearch() {
+            const searchInput = document.querySelector('.search-input-full');
+            const query = searchInput.value.trim();
+            
+            if (query) {
+                // 添加搜索关键词到筛选器
+                currentFilters.searchQuery = query;
+                applyFilters();
+                updateFilterTags();
+                updateClearFiltersButton();
+                
+                // 滚动到搜索结果
+                document.querySelector('.news-content').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // AI对话相关功能
+        function toggleAIChat() {
+            const btn = document.getElementById('floatingAiBtn');
+            const modal = document.getElementById('aiChatModal');
+            
+            if (modal.style.display === 'block') {
+                modal.style.display = 'none';
+                btn.style.display = 'flex';
+            } else {
+                modal.style.display = 'block';
+                btn.style.display = 'none';
+            }
+        }
+
+        function sendAIMessage() {
+            const input = document.getElementById('aiChatInput');
+            const message = input.value.trim();
+            
+            if (message) {
+                addUserMessage(message);
+                input.value = '';
+                
+                // 模拟AI回复
+                setTimeout(() => {
+                    const aiResponse = generateAIResponse(message);
+                    addAIMessage(aiResponse);
+                }, 1000);
+            }
+        }
+
+        function handleAIChatEnter(event) {
+            if (event.key === 'Enter') {
+                sendAIMessage();
+            }
+        }
+
+        function addUserMessage(message) {
+            const messagesContainer = document.getElementById('aiChatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'user-message';
+            messageDiv.innerHTML = `
+                <div class="user-avatar">👤</div>
+                <div class="user-text">${message}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function addAIMessage(message) {
+            const messagesContainer = document.getElementById('aiChatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'ai-message';
+            messageDiv.innerHTML = `
+                <div class="ai-avatar">🤖</div>
+                <div class="ai-text">${message}</div>
+            `;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function generateAIResponse(userMessage) {
+            const responses = [
+                '这是一个很有趣的问题！让我来帮你分析一下...',
+                '根据我的理解，这个问题的答案是...',
+                '我建议你可以从以下几个角度来思考这个问题...',
+                '这是一个技术性很强的问题，让我为你详细解释...',
+                '基于最新的AI技术发展，我认为...',
+                '这个问题涉及到多个方面，让我逐一为你分析...'
+            ];
+            
+            return responses[Math.floor(Math.random() * responses.length)];
+        }
+    </script>
+</body>
+</html>
