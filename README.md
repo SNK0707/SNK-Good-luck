@@ -1,2 +1,0 @@
-# SNK-Good-luck
-Demo
